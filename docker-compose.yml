@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  another_extension_for_test_dev:
+    container_name: another_extension_for_test_dev
+    build:
+      context: .
+    working_dir: /extension
+    command: cextrun -d --no-rich-logging
+    volumes: 
+      - .:/extension
+    env_file:
+      - .another_extension_for_test_dev.env
+
+  another_extension_for_test_bash:
+    container_name: another_extension_for_test_bash
+    build:
+      context: .
+    working_dir: /extension
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/extension
+    env_file:
+      - .another_extension_for_test_dev.env
+
+  another_extension_for_test_test:
+    container_name: another_extension_for_test_test
+    build:
+      context: .
+    working_dir: /extension
+    command: extension-test
+    volumes:
+      - .:/extension
+    env_file:
+      - .another_extension_for_test_dev.env
