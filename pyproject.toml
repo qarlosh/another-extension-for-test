@@ -11,6 +11,7 @@ readme = "./README.md"
 
 [tool.poetry.plugins."connect.eaas.ext"]
 "eventsapp" = "connect_ext.events:AnotherExtensionForTestEventsApplication"
+"webapp" = "connect_ext.webapp:AnotherExtensionForTestWebApplication"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4"
