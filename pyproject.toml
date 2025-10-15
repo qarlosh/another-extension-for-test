@@ -17,7 +17,6 @@ readme = "./README.md"
 python = ">=3.8,<4"
 connect-eaas-core = ">=30"
 pendulum = "^2.0.0"
-pydantic = "<2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.1.2,<8"
