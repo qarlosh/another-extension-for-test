@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2024, Globex Corporation
-# All rights reserved.
-#
 import pytest
 from connect.client import AsyncConnectClient, ConnectClient
 

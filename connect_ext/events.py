@@ -1,102 +1,50 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2024, Globex Corporation
-# All rights reserved.
-#
+import sys
+from functools import reduce
 from connect.eaas.core.decorators import (
     event,
+    schedulable,
     variables,
 )
 from connect.eaas.core.extension import EventsApplicationBase
 from connect.eaas.core.responses import (
     BackgroundResponse,
+    ScheduledExecutionResponse,
 )
+
+list_of_bytearrays = []
 
 
 @variables([
     {
-        'name': 'VAR_NAME_1',
-        'initial_value': 'VAR_VALUE_1',
+        'name': 'ALLOC_MEM_SIZE_MB',
+        'initial_value': '100',
         'secure': False,
-    },
-    {
-        'name': 'VAR_NAME_N',
-        'initial_value': 'VAR_VALUE_N',
-        'secure': True,
     },
 ])
 class AnotherExtensionForTestEventsApplication(EventsApplicationBase):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        import pendulum
-        self.logger.warning("**** PENDULUM VERSION: %s", pendulum.__version__)
-
-    @event(
-        'asset_cancel_request_processing',
-        statuses=[
-            'pending', 'approved', 'failed',
-            'scheduled', 'revoking', 'revoked',
-        ],
-    )
-    def handle_asset_cancel_request_processing(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
-        return BackgroundResponse.done()
-
     @event(
         'asset_purchase_request_processing',
-        statuses=[
-            'pending', 'approved', 'failed',
-            'inquiring', 'scheduled', 'revoking',
-            'tiers_setup', 'revoked',
-        ],
+        statuses=['pending', 'approved', 'scheduled'],
     )
     def handle_asset_purchase_request_processing(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
+        self.logger.info(
+            f"Handle 'asset_purchase_request_processing', request with id {request['id']}"
+        )
         return BackgroundResponse.done()
 
-    @event(
-        'asset_resume_request_processing',
-        statuses=[
-            'pending', 'approved', 'failed',
-            'scheduled', 'revoking', 'revoked',
-        ],
-    )
-    def handle_asset_resume_request_processing(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
-        return BackgroundResponse.done()
+    @schedulable('alloc_mem', '')
+    def alloc_mem(self, schedule):
+        print(schedule)
+        self.logger.info("EXECUTING SCHEDULABLE alloc_mem")
+        ba = bytearray(int(self.config['ALLOC_MEM_SIZE_MB']) * 1024 * 1024)
+        list_of_bytearrays.append(ba)
+        self.logger.info(f"allocated {sys.getsizeof(ba) / 1024 / 1024} MB")
+        self.logger.info(f"(total allocated: {reduce(lambda acum, ba: acum + sys.getsizeof(ba), list_of_bytearrays, 0) / 1024 / 1024} MB) ")
+        return ScheduledExecutionResponse.done()
 
-    @event(
-        'asset_adjustment_request_processing',
-        statuses=[
-            'pending', 'approved', 'failed',
-            'inquiring', 'scheduled', 'revoking',
-            'tiers_setup', 'revoked',
-        ],
-    )
-    def handle_asset_adjustment_request_processing(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
-        return BackgroundResponse.done()
-
-    @event(
-        'asset_change_request_processing',
-        statuses=[
-            'pending', 'approved', 'failed',
-            'inquiring', 'scheduled', 'revoking',
-            'tiers_setup', 'revoked',
-        ],
-    )
-    def handle_asset_change_request_processing(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
-        return BackgroundResponse.done()
-
-    @event(
-        'asset_suspend_request_processing',
-        statuses=[
-            'pending', 'approved', 'failed',
-            'scheduled', 'revoking', 'revoked',
-        ],
-    )
-    def handle_asset_suspend_request_processing(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
-        return BackgroundResponse.done()
+    @schedulable('clear_mem', '')
+    def clear_mem(self, schedule):
+        self.logger.info("EXECUTING SCHEDULABLE clear_mem")
+        list_of_bytearrays.clear()
+        self.logger.info(f"(total allocated: {reduce(lambda acum, ba: acum + sys.getsizeof(ba), list_of_bytearrays, 0) / 1024 / 1024} MB) ")
+        return ScheduledExecutionResponse.done()

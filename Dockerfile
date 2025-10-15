@@ -1,4 +1,4 @@
-FROM cloudblueconnect/connect-extension-runner:31.0
+FROM cloudblueconnect/connect-extension-runner:37.0
 
 COPY pyproject.toml poetry.* package*.json /extension/
 WORKDIR /extension
