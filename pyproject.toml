@@ -14,8 +14,8 @@ readme = "./README.md"
 "webapp" = "connect_ext.webapp:AnotherExtensionForTestWebApplication"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-connect-eaas-core = ">=37.4"
+python = ">=3.9,<4"
+connect-eaas-core = ">=33.0,<37"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.1.2,<8"
