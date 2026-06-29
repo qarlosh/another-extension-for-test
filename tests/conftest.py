@@ -1,5 +1,5 @@
-import pytest
 from connect.client import AsyncConnectClient, ConnectClient
+import pytest
 
 
 @pytest.fixture

@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   another_extension_for_test_dev:
     container_name: another_extension_for_test_dev
